@@ -1,18 +1,19 @@
-name: Test Omnifractal Audit Action
+name: Send POST request to API
 
-on: [push]
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  test_audit_action:
+  send_post_request:
     runs-on: ubuntu-latest
 
     steps:
-    - name: Checkout code
+    - name: Checkout repository
       uses: actions/checkout@v2
 
-    - name: Run Omnifractal Audit Action
-      id: audit
-      uses: faceplace/icefractal-actions@main
+    - name: Send POST request using custom action
+      uses: your-username/send-request-action@main
       with:
-        pages: |
-          - u4sedqsS1aFnUQRTpGqh
+        pages: '["page1_id", "page2_id", "page3_id"]'

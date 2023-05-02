@@ -1,34 +1,15 @@
-name: 'Omnifractal Audit Action'
-description: 'Audit pages using Omnifractal API'
-branding:
-  icon: 'check'
-  color: 'blue'
-
+name: 'Send Request Action'
+description: 'Send a POST request to the API with a list of pages as input'
 inputs:
   pages:
-    description: 'Newline-separated string of pages to audit'
+    description: 'A list of strings or IDs representing the pages'
     required: true
-
-  api_key:
-    description: 'Omnifractal API key'
-    required: false
-
-outputs:
-  audit_result:
-    description: 'The audit result from the Omnifractal API'
-    value: ${{ steps.audit_step.outputs.audit_result }}
-
 runs:
   using: 'composite'
   steps:
-    - name: 'Set execute permission for audit.sh'
-      run: chmod +x audit.sh
-      shell: bash
-
-    - id: audit_step
-      name: 'Audit pages using Omnifractal API'
+    - name: Send POST request using curl
       run: |
-        echo "Running audit for pages: ${{ inputs.pages }}"
-        pages_array=$(echo '${{ inputs.pages }}' | jq -R -s -c 'split("\n")')
-        ./audit.sh "$pages_array"
+        API_ENDPOINT="https://api.omnifractal.com/v1/auditWithActions"
+        PAGES='${{ inputs.pages }}'
+        curl -X POST -H "Content-Type: application/json" -d "{\"pages\": $PAGES}" $API_ENDPOINT
       shell: bash
