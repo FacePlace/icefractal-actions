@@ -21,6 +21,10 @@ outputs:
 runs:
   using: 'composite'
   steps:
+    - name: 'Set execute permission for audit.sh'
+      run: chmod +x audit.sh
+      shell: bash
+
     - id: audit_step
       name: 'Audit pages using Omnifractal API'
       run: |
