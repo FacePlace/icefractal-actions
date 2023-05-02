@@ -6,7 +6,7 @@ branding:
 
 inputs:
   pages:
-    description: 'Array of pages to audit'
+    description: 'Newline-separated string of pages to audit'
     required: true
 
   api_key:
@@ -29,5 +29,6 @@ runs:
       name: 'Audit pages using Omnifractal API'
       run: |
         echo "Running audit for pages: ${{ inputs.pages }}"
-        ./audit.sh ${{ inputs.pages }}
+        pages_array=$(echo '${{ inputs.pages }}' | jq -R -s -c 'split("\n")')
+        ./audit.sh "$pages_array"
       shell: bash
