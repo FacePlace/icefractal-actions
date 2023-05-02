@@ -1,0 +1,29 @@
+name: 'Omnifractal Audit Action'
+description: 'Audit pages using Omnifractal API'
+branding:
+  icon: 'check'
+  color: 'blue'
+
+inputs:
+  pages:
+    description: 'Array of pages to audit'
+    required: true
+
+  api_key:
+    description: 'Omnifractal API key'
+    required: true
+
+outputs:
+  audit_result:
+    description: 'The audit result from the Omnifractal API'
+    value: ${{ steps.audit_step.outputs.audit_result }}
+
+runs:
+  using: 'composite'
+  steps:
+    - id: audit_step
+      name: 'Audit pages using Omnifractal API'
+      run: |
+        echo "Running audit for pages: ${{ inputs.pages }}"
+        ./audit.sh "${{ inputs.pages }}" "${{ inputs.api_key }}"
+      shell: bash
