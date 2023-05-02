@@ -14,6 +14,6 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Send POST request using custom action
-      uses: your-username/send-request-action@main
+      uses: faceplace/icefractal-actions@main
       with:
         pages: '["page1_id", "page2_id", "page3_id"]'
