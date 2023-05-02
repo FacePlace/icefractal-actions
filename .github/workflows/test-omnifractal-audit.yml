@@ -1,0 +1,17 @@
+name: Test Omnifractal Audit Action
+
+on: [push]
+
+jobs:
+  test_audit_action:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Run Omnifractal Audit Action
+      id: audit
+      uses: faceplace/icefractal-actions@v1.0.0
+      with:
+        pages: '["u4sedqsS1aFnUQRTpGqh"]'

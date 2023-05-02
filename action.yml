@@ -11,7 +11,7 @@ inputs:
 
   api_key:
     description: 'Omnifractal API key'
-    required: true
+    required: false
 
 outputs:
   audit_result:
@@ -25,5 +25,5 @@ runs:
       name: 'Audit pages using Omnifractal API'
       run: |
         echo "Running audit for pages: ${{ inputs.pages }}"
-        ./audit.sh "${{ inputs.pages }}" "${{ inputs.api_key }}"
+        ./audit.sh "${{ inputs.pages }}"
       shell: bash
