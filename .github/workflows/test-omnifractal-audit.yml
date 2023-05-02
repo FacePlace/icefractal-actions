@@ -16,4 +16,4 @@ jobs:
     - name: Send POST request using custom action
       uses: faceplace/icefractal-actions@main
       with:
-        pages: '["page1_id", "page2_id", "page3_id"]'
+        pages: '["u4sedqsS1aFnUQRTpGqh"]'
