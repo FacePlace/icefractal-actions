@@ -29,5 +29,5 @@ runs:
       name: 'Audit pages using Omnifractal API'
       run: |
         echo "Running audit for pages: ${{ inputs.pages }}"
-        ./audit.sh "${{ inputs.pages }}"
+        ./audit.sh '${{ toJSON(inputs.pages) }}'
       shell: bash

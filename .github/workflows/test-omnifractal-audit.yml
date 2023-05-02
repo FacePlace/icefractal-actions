@@ -14,4 +14,5 @@ jobs:
       id: audit
       uses: faceplace/icefractal-actions@main
       with:
-        pages: '["u4sedqsS1aFnUQRTpGqh"]'
+        pages: |
+          - u4sedqsS1aFnUQRTpGqh
