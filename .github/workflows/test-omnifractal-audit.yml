@@ -12,6 +12,6 @@ jobs:
 
     - name: Run Omnifractal Audit Action
       id: audit
-      uses: faceplace/icefractal-actions@v1.0.0
+      uses: faceplace/icefractal-actions@main
       with:
         pages: '["u4sedqsS1aFnUQRTpGqh"]'
