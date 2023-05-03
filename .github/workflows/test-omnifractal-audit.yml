@@ -10,18 +10,22 @@ jobs:
   make_post_request:
     runs-on: ubuntu-latest
     steps:
-    - name: Send POST request
-      run: |
-        pages_json="["
+      - name: Send POST request
+        run: |
+          # Convert the YAML array into a JSON array
+          pages_json="["
+          while IFS= read -r line; do
+            trimmed_line=$(echo "$line" | xargs) # Trim the line
+            pages_json="${pages_json}\"${trimmed_line}\","
+          done <<< "$PAGES"
+          pages_json="${pages_json%,}]"
 
-        while IFS= read -r line; do
-          pages_json="${pages_json}\"${line}\","
-        done <<< "$PAGES"
+          # Create the JSON payload
+          payload="{\"pages\": $pages_json}"
 
-        pages_json="${pages_json%,}]"
-        payload=$(echo "{\"pages\": $pages_json}")
+          # Send the POST request
+          curl -X POST -f \
+            -H "Content-Type: application/json" \
+            -d "$payload" \
+            https://api.omnifractal.com/v1/auditWithActions
 
-        curl -X POST -f \
-          -H "Content-Type: application/json" \
-          -d "$payload" \
-          https://api.omnifractal.com/v1/auditWithActions
