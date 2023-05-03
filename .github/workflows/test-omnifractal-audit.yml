@@ -2,6 +2,9 @@ name: My Workflow
 
 on: [push]
 
+env:
+  PAGES: '["u4sedqsS1aFnUQRTpGqh", "another_page_id"]'
+
 jobs:
   make_post_request:
     runs-on: ubuntu-latest
@@ -10,5 +13,5 @@ jobs:
       run: |
         curl -X POST \
           -H "Content-Type: application/json" \
-          -d '{"pages": ["u4sedqsS1aFnUQRTpGqh"]}' \
+          -d '{"pages": $PAGES}' \
           https://api.omnifractal.com/v1/auditWithActions
