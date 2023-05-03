@@ -12,8 +12,15 @@ jobs:
     steps:
     - name: Send POST request
       run: |
-        pages_json=$(echo "$PAGES" | jq -R . | jq -s .)
+        pages_json="["
+
+        while IFS= read -r line; do
+          pages_json="${pages_json}\"${line}\","
+        done <<< "$PAGES"
+
+        pages_json="${pages_json%,}]"
         payload=$(echo "{\"pages\": $pages_json}")
+
         curl -X POST -f \
           -H "Content-Type: application/json" \
           -d "$payload" \
