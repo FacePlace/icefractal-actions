@@ -14,6 +14,8 @@ jobs:
         # Convert comma-separated PAGE_IDS to JSON array
         page_ids_json=$(echo "[$(echo $PAGE_IDS | sed 's/,/","/g' | sed 's/\([^,"]\)/"\1/g')]")
 
+        echo "Sending POST request to API with page IDs: $page_ids_json"
+
         payload=$(echo "{\"pages\": $page_ids_json}")
         curl -X POST -f \
           -H "Content-Type: application/json" \
