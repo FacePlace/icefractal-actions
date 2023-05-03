@@ -3,7 +3,7 @@ name: My Workflow
 on: [push]
 
 env:
-  PAGES: '["u4sedqsS1aFnUQRTpGqh"]'
+  PAGE_IDS: u4sedqsS1aFnUQRTpGqh
 
 jobs:
   make_post_request:
@@ -11,7 +11,10 @@ jobs:
     steps:
     - name: Send POST request
       run: |
-        payload=$(echo "{\"pages\": $PAGES}")
+        # Convert comma-separated PAGE_IDS to JSON array
+        page_ids_json=$(echo "[$(echo $PAGE_IDS | sed 's/,/","/g' | sed 's/\([^,"]\)/"\1/g')]")
+
+        payload=$(echo "{\"pages\": $page_ids_json}")
         curl -X POST -f \
           -H "Content-Type: application/json" \
           -d "$payload" \
