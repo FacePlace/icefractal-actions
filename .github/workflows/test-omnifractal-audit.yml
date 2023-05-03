@@ -1,19 +1,15 @@
-name: Send POST request to API
+name: My Workflow
 
-on:
-  push:
-    branches:
-      - main
+on: [push]
 
 jobs:
-  send_post_request:
+  make_post_request:
     runs-on: ubuntu-latest
-
     steps:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Send POST request using custom action
-      uses: faceplace/icefractal-actions@main
+    - name: Send POST request
+      uses: actions/http-client@v1.0.0
       with:
-        pages: '["u4sedqsS1aFnUQRTpGqh"]'
+        url: 'https://api.omnifractal.com/v1/auditWithActions'
+        method: POST
+        headers: '{"Content-Type": "application/json"}'
+        body: '{"pages": ["u4sedqsS1aFnUQRTpGqh"]}'
