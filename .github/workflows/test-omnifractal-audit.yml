@@ -13,5 +13,5 @@ jobs:
       run: |
         curl -X POST -f \
           -H "Content-Type: application/json" \
-          -d '{"pages": $PAGES}' \
+          -d '{\"pages\": $PAGES}' \
           https://api.omnifractal.com/v1/auditWithActions
