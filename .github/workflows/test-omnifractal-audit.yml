@@ -7,9 +7,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Send POST request
-      uses: actions/http-client@v1.0.0
-      with:
-        url: 'https://api.omnifractal.com/v1/auditWithActions'
-        method: POST
-        headers: '{"Content-Type": "application/json"}'
-        body: '{"pages": ["u4sedqsS1aFnUQRTpGqh"]}'
+      run: |
+        curl -X POST \
+          -H "Content-Type: application/json" \
+          -d '{"pages": ["u4sedqsS1aFnUQRTpGqh"]}' \
+          https://api.omnifractal.com/v1/auditWithActions
