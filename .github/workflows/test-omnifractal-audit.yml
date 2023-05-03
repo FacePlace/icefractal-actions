@@ -12,7 +12,7 @@ jobs:
     - name: Send POST request
       run: |
         # Convert comma-separated PAGE_IDS to JSON array
-        page_ids_json=$(echo "[$(echo $PAGE_IDS | sed 's/,/\",\"/g' | sed 's/\([^,"]\)/\"\1\"/g')]")
+        page_ids_json="[$(echo \"$PAGE_IDS\" | sed 's/,/","/g' | sed 's/\([^,"]\+\)/"\1"/g')]"
 
         echo "Sending POST request to API with page IDs: $page_ids_json"
 
