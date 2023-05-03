@@ -3,33 +3,16 @@ name: My Workflow
 on: [push]
 
 env:
-  PAGES: |
-    - u4sedqsS1aFnUQRTpGqh
+  PAGES: '["u4sedqsS1aFnUQRTpGqh"]'
 
 jobs:
   make_post_request:
     runs-on: ubuntu-latest
     steps:
-      - name: Send POST request
-        run: |
-          # Convert the YAML string into an array
-          IFS=$'\n' read -ra pages_array <<< "$PAGES"
-
-          # Convert the array into a JSON array
-          pages_json="["
-          for page in "${pages_array[@]}"; do
-            trimmed_page=$(echo "$page" | xargs) # Trim the page
-            pages_json="${pages_json}\"${trimmed_page}\","
-          done
-          pages_json="${pages_json%,}]"
-
-          # Create the JSON payload
-          payload="{\"pages\": $pages_json}"
-
-          # Send the POST request
-          curl -X POST -f \
-            -H "Content-Type: application/json" \
-            -d "$payload" \
-            https://api.omnifractal.com/v1/auditWithActions
-
-
+    - name: Send POST request
+      run: |
+        payload=$(echo "{\"pages\": $PAGES}")
+        curl -X POST -f \
+          -H "Content-Type: application/json" \
+          -d "$payload" \
+          https://api.omnifractal.com/v1/auditWithActions
