@@ -3,7 +3,8 @@ name: My Workflow
 on: [push]
 
 env:
-  PAGES: '["u4sedqsS1aFnUQRTpGqh"]'
+  PAGES: |
+    - u4sedqsS1aFnUQRTpGqh
 
 jobs:
   make_post_request:
@@ -11,7 +12,8 @@ jobs:
     steps:
     - name: Send POST request
       run: |
-        payload=$(echo "{\"pages\": $PAGES}")
+        pages_json=$(echo "$PAGES" | jq -R . | jq -s .)
+        payload=$(echo "{\"pages\": $pages_json}")
         curl -X POST -f \
           -H "Content-Type: application/json" \
           -d "$payload" \
