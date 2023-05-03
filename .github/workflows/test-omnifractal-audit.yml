@@ -3,7 +3,7 @@ name: My Workflow
 on: [push]
 
 env:
-  PAGE_IDS: u4sedqsS1aFnUQRTpGqh
+  PAGE_IDS: u4sedqsS1aFnUQRTpGqh,u4sedqsS1aFnUQRTpGqh
 
 jobs:
   make_post_request:
