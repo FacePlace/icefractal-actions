@@ -23,6 +23,8 @@ jobs:
           # Create the JSON payload
           payload="{\"pages\": $pages_json}"
 
+          echo "Sending the following payload: $payload"
+
           # Send the POST request
           curl -X POST -f \
             -H "Content-Type: application/json" \
