@@ -12,22 +12,24 @@ jobs:
     steps:
       - name: Send POST request
         run: |
-          # Convert the YAML array into a JSON array
+          # Convert the YAML string into an array
+          IFS=$'\n' read -ra pages_array <<< "$PAGES"
+
+          # Convert the array into a JSON array
           pages_json="["
-          while IFS= read -r line; do
-            trimmed_line=$(echo "$line" | xargs) # Trim the line
-            pages_json="${pages_json}\"${trimmed_line}\","
-          done <<< "$PAGES"
+          for page in "${pages_array[@]}"; do
+            trimmed_page=$(echo "$page" | xargs) # Trim the page
+            pages_json="${pages_json}\"${trimmed_page}\","
+          done
           pages_json="${pages_json%,}]"
 
           # Create the JSON payload
           payload="{\"pages\": $pages_json}"
-
-          echo "Sending the following payload: $payload"
 
           # Send the POST request
           curl -X POST -f \
             -H "Content-Type: application/json" \
             -d "$payload" \
             https://api.omnifractal.com/v1/auditWithActions
+
 
