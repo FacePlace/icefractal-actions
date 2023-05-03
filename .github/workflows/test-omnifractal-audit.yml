@@ -11,7 +11,7 @@ jobs:
     steps:
     - name: Send POST request
       run: |
-        curl -X POST \
+        curl -X POST -f \
           -H "Content-Type: application/json" \
           -d '{"pages": $PAGES}' \
           https://api.omnifractal.com/v1/auditWithActions
