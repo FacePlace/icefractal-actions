@@ -3,7 +3,7 @@ name: My Workflow
 on: [push]
 
 env:
-  PAGES: '["u4sedqsS1aFnUQRTpGqh", "another_page_id"]'
+  PAGES: '["u4sedqsS1aFnUQRTpGqh"]'
 
 jobs:
   make_post_request:
