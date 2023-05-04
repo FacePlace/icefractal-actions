@@ -13,6 +13,7 @@ jobs:
           u4sedqsS1aFnUQRTpGqh
           u4sedqsS1aFnUQRTpGqh
         apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
-        budgetPath: ${{ toJson(file('.github/omnifractal/budget.json')) }}
+        budgetPath: .github/omnifractal/budget.json
+        budget: ${{ toJson(file('.github/omnifractal/budget.json')) }}
         # repository: ${{ github.repository }}
         # ref_name: ${{ github.ref_name }}
