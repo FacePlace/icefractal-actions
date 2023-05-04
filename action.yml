@@ -10,27 +10,7 @@ inputs:
   budgetPath:
     description: 'Path to the Lighthouse budget file'
     required: false
-    
+
 runs:
-  using: 'composite'
-  steps:
-    - name: Send POST request using curl
-      run: |
-        PAGE_IDS_JSON=[$(echo ${{ inputs.pages }} | sed 's/,/,/g' | sed 's/\([^,"]\+\)/"\1"/g')]
-
-        if [ -n "${{ inputs.budgetPath }}" ]; then
-          BUDGET_JSON=$(cat "${{ inputs.budgetPath }}" | jq -c .)
-        else
-          BUDGET_JSON=""
-        fi
-        
-        PAYLOAD=$(echo "{\"pages\": $PAGE_IDS_JSON, \"lighthouseBudget\": $BUDGET_JSON}")
-
-        echo "Sending request with payload: $PAYLOAD"
-
-        curl -X POST -f \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer ${{ inputs.apiKey }}" \
-          -d "$PAYLOAD" \
-          https://api.omnifractal.com/v1/auditWithActions
-      shell: bash
+  using: 'node16'
+  main: 'dist/index.js'
