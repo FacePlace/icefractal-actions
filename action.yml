@@ -7,7 +7,7 @@ inputs:
   apiKey:
     description: 'API key for authorization'
     required: true
-  budgetPath:
+  budgetsPath:
     description: 'Path to the Lighthouse budget file'
     required: false
 

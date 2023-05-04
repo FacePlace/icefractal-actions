@@ -10,13 +10,13 @@ const path = require('path');
     // const budget = core.getInput('budget');
     // console.log(JSON.parse(budget))
     
-    const budgetPath = core.getInput('budgetPath');
-    const budget = budgetPath ? 
-    JSON.parse(fs.readFileSync(budgetPath, 'utf8')) :
-    undefined;
+    const budgetsPath = core.getInput('budgetsPath');
+    const budgets = budgetsPath ? 
+      JSON.parse(fs.readFileSync(budgetsPath, 'utf8')) :
+      undefined;
     
     console.log(pages);
-    console.log(budget);
+    console.log(budgets);
     
     const apiKey = core.getInput('apiKey');
 
@@ -24,7 +24,7 @@ const path = require('path');
       'https://api.omnifractal.com/v1/auditWithActions',
       {
         pages: pages,
-        budget: budget,
+        budgets: budgets,
       },
       {
         headers: {
