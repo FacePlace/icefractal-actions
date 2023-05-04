@@ -11,6 +11,6 @@ jobs:
       with:
         pages: u4sedqsS1aFnUQRTpGqh
         apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
-        budgetPath: '.github/omnifractal/budget.json'
+        budgetPath: '${{ github.workspace }}/.github/omnifractal/budget.json'
         # repository: ${{ github.repository }}
         # ref_name: ${{ github.ref_name }}
