@@ -2,25 +2,12 @@ name: My Workflow
 
 on: [push]
 
-env:
-  PAGE_IDS: u4sedqsS1aFnUQRTpGqh,XMWcWHGL6ihaaCSDPXU1
-
 jobs:
-  make_post_request:
+  send_request:
     runs-on: ubuntu-latest
     steps:
-    - name: Send POST request
-      env:
-        OMNIFRACTAL_TEST_PROJECT1_API_KEY: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
-      run: |
-        # Convert comma-separated PAGE_IDS to JSON array
-        page_ids_json=[$(echo $PAGE_IDS | sed 's/,/,/g' | sed 's/\([^,"]\+\)/"\1"/g')]
-
-        echo "Sending POST request to API with page IDs: $page_ids_json"
-
-        payload=$(echo "{\"pages\": $page_ids_json}")
-        curl -X POST -f \
-          -H "Content-Type: application/json" \
-          -H "Authorization: Bearer $OMNIFRACTAL_TEST_PROJECT1_API_KEY" \
-          -d "$payload" \
-          https://api.omnifractal.com/v1/auditWithActions
+    - name: Send POST request using Send Request Action
+      uses: faceplace/icefractal-actions@main
+      with:
+        pages: u4sedqsS1aFnUQRTpGqh
+        apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}

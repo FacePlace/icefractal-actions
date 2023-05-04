@@ -4,12 +4,21 @@ inputs:
   pages:
     description: 'A list of strings or IDs representing the pages'
     required: true
+  apiKey:
+    description: 'API key for authorization'
+    required: true
+    
 runs:
   using: 'composite'
   steps:
     - name: Send POST request using curl
       run: |
-        API_ENDPOINT="https://api.omnifractal.com/v1/auditWithActions"
-        PAGES='${{ inputs.pages }}'
-        curl -X POST -H "Content-Type: application/json" -d "{\"pages\": $PAGES}" $API_ENDPOINT
+        PAGE_IDS_JSON=[$(echo ${{ inputs.pages }} | sed 's/,/,/g' | sed 's/\([^,"]\+\)/"\1"/g')]
+        PAYLOAD=$(echo "{\"pages\": $PAGE_IDS_JSON}")
+
+        curl -X POST -f \
+          -H "Content-Type: application/json" \
+          -H "Authorization: Bearer ${{ inputs.apiKey }}" \
+          -d "$PAYLOAD" \
+          https://api.omnifractal.com/v1/auditWithActions
       shell: bash
