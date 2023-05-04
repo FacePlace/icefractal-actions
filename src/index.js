@@ -15,9 +15,6 @@ const path = require('path');
       JSON.parse(fs.readFileSync(budgetsPath, 'utf8')) :
       undefined;
     
-    console.log(pages);
-    console.log(budgets);
-    
     const apiKey = core.getInput('apiKey');
 
     await axios.post(
