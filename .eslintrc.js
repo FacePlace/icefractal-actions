@@ -12,11 +12,8 @@ module.exports = {
     'eslint:recommended',
     'plugin:import/errors',
     'plugin:import/warnings',
-    'plugin:import/typescript',
     'google',
-    'plugin:@typescript-eslint/recommended',
   ],
-  parser: '@typescript-eslint/parser',
   settings: {
     'import/resolver': {
       'node': {
@@ -25,15 +22,10 @@ module.exports = {
     },
   },
   parserOptions: {
-    project: ['tsconfig.json', 'tsconfig.dev.json'],
-    tsconfigRootDir: __dirname,
     sourceType: 'module',
+    ecmaVersion: 8,
   },
-  ignorePatterns: [
-    '/dist/**/*', // Ignore built files.
-  ],
   plugins: [
-    '@typescript-eslint',
     'import',
   ],
   rules: {
@@ -55,8 +47,5 @@ module.exports = {
     'indent': [ERROR, 2, { 'SwitchCase': 1 }],
     'space-before-blocks': [ERROR, 'always'],
     // see: https://github.com/import-js/eslint-plugin-import/issues/1810
-    'import/no-unresolved': ['error', { ignore: ['firebase-admin.*', '@type/*'] }],
-    '@typescript-eslint/no-var-requires': [OFF],
-    '@typescript-eslint/no-explicit-any': [OFF],
   },
 };

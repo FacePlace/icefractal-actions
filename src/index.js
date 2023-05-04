@@ -18,6 +18,6 @@ import * as core from '@actions/core';
         'Content-Type': 'application/json',
         'Authorization': `Bearer ${apiKey}`,
       },
-    }
+    },
   );
 })();
