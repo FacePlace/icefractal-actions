@@ -2,7 +2,7 @@ const core = require('@actions/core');
 const axios = require('axios');
 
 (async function() {
-  const pages = core.getInput('pages');
+  const pages = core.getInput('pages').split('\n').map((page) => page.trim());
   console.log(pages);
   const apiKey = core.getInput('apiKey');
 
@@ -10,7 +10,7 @@ const axios = require('axios');
     'https://api.omnifractal.com/v1/auditWithActions',
     {
       pages: [
-        pages,
+        ...pages,
       ],
     },
     {
