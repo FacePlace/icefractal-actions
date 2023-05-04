@@ -1,5 +1,5 @@
-import axios from 'axios';
-import * as core from '@actions/core';
+const axios = require('axios');
+const core = require('@actions/core');
 
 (async function() {
   const pages = core.getInput('pages');
