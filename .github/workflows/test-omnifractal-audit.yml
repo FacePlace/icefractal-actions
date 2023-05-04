@@ -10,6 +10,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Send POST request
+      env:
+        OMNIFRACTAL_TEST_PROJECT1_API_KEY: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
       run: |
         # Convert comma-separated PAGE_IDS to JSON array
         page_ids_json=[$(echo $PAGE_IDS | sed 's/,/,/g' | sed 's/\([^,"]\+\)/"\1"/g')]
@@ -19,5 +21,6 @@ jobs:
         payload=$(echo "{\"pages\": $page_ids_json}")
         curl -X POST -f \
           -H "Content-Type: application/json" \
+          -H "Authorization: Bearer $OMNIFRACTAL_TEST_PROJECT1_API_KEY" \
           -d "$payload" \
           https://api.omnifractal.com/v1/auditWithActions
