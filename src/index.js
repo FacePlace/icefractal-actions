@@ -1,5 +1,5 @@
-const axios = require('axios');
 const core = require('@actions/core');
+const axios = require('axios');
 
 (async function() {
   const pages = core.getInput('pages');
