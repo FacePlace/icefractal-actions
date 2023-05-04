@@ -5,9 +5,13 @@ const fs = require('fs');
 (async function() {
   const pages = core.getInput('pages').split('\n').map((page) => page.trim());
   const budgetPath = core.getInput('budgetPath');
-  const budget = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
+  const budgetR = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
+
   console.log(pages);
   console.log(budget)
+  const budget = core.getInput('budget');
+  console.log(JSON.parse(budget))
+
   const apiKey = core.getInput('apiKey');
 
   await axios.post(
