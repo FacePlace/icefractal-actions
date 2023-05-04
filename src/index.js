@@ -10,10 +10,10 @@ const path = require('path');
   // console.log(JSON.parse(budget))
 
   const budgetPath = core.getInput('budgetPath');
-  const budgetR = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
+  const budget = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
 
   console.log(pages);
-  console.log(budgetR);
+  console.log(budget);
 
   const apiKey = core.getInput('apiKey');
 
