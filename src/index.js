@@ -17,6 +17,8 @@ const path = require('path');
     
     const apiKey = core.getInput('apiKey');
 
+    console.log('budgets', budgets);
+
     await axios.post(
       'https://api.omnifractal.com/v1/auditWithActions',
       {
