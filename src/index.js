@@ -1,17 +1,19 @@
 const core = require('@actions/core');
 const axios = require('axios');
 const fs = require('fs');
+const path = require('path');
 
 (async function() {
   const pages = core.getInput('pages').split('\n').map((page) => page.trim());
 
-  const budget = core.getInput('budget');
-  console.log(JSON.parse(budget))
+  // const budget = core.getInput('budget');
+  // console.log(JSON.parse(budget))
 
-  // const budgetPath = core.getInput('budgetPath');
-  // const budgetR = JSON.parse(fs.readFileSync(budgetPath, 'utf8'));
+  const budgetPath = core.getInput('budgetPath');
+  const budgetR = JSON.parse(fs.readFileSync(path.join(__dirname, budgetPath), 'utf8'));
 
   console.log(pages);
+  console.log(budgetR);
 
   const apiKey = core.getInput('apiKey');
 
