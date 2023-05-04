@@ -19,3 +19,12 @@ jobs:
 
     - name: Build TypeScript
       run: npm run build
+
+    - name: Send POST request using Send Request Action
+      uses: faceplace/icefractal-actions@main
+      with:
+        pages: u4sedqsS1aFnUQRTpGqh
+        apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
+        budgetPath: '${{ github.workspace }}/.github/omnifractal/budget.json'
+        # repository: ${{ github.repository }}
+        # ref_name: ${{ github.ref_name }}
