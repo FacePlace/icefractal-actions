@@ -34,7 +34,7 @@ const path = require('path');
       },
       )
       .catch((error) => {
-        console.log(error.response.data);
+        console.log(error);
         core.setFailed(error.response.data);
       });
   }  catch (error) {
