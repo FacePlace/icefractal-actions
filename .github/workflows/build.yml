@@ -12,6 +12,7 @@ jobs:
       with:
         pages: |
           cs7FrcGScrf28787YXcv
+          gDdRivRY6h6Fk2X97XzE
         apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
         budgetsPath: '.github/omnifractal/budgets.json'
         # budget: ${{ toJson(file('.github/omnifractal/budget.json')) }}
