@@ -11,8 +11,8 @@ jobs:
       uses: faceplace/icefractal-actions@main
       with:
         pages: |
-          7g9IZ3gvuDURkBcPrnJF
-          yu05HHM0EWCzMK0y3Gol
+          0kxac5nxy0XUhhaXi8XI
+          F7zVErKh75cKviLyVvv5
         apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
         budgetsPath: '.github/omnifractal/budgets.json'
         # budget: ${{ toJson(file('.github/omnifractal/budget.json')) }}
