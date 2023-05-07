@@ -6,21 +6,18 @@ jobs:
   send_request:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v3
-    - name: Send POST request using Send Request Action
-      uses: faceplace/icefractal-actions@main
-      with:
-        pages: |
-          Hp0HYqYTysEJ1iLvOh8D
-          qk9SePmmwaG0UWRsI16o
-        apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
-        budgetsPath: '.github/omnifractal/budgets.json'
-        # budget: ${{ toJson(file('.github/omnifractal/budget.json')) }}
-        # repository: ${{ github.repository }}
-        # ref_name: ${{ github.ref_name }}
-        branch: ${{ github.ref }}
-        repository: ${{ github.repository }}
-        commit_sha: ${{ github.sha }}
-        commit_message: ${{ github.event.head_commit.message }}
-        commit_author: ${{ github.event.head_commit.author.name }}
-        commit_author_email: ${{ github.event.head_commit.author.email }}
+      - uses: actions/checkout@v3 # Checkout your code to the GitHub Actions runner
+      - name: Run audits of Page 1 and Page 2
+        uses: omnifractal/audit-actions@main
+        with:
+          pages:
+            Hp0HYqYTysEJ1iLvOh8D
+            qk9SePmmwaG0UWRsI16o
+          apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
+          budgetsPath: '.github/omnifractal/budgets.json' # example of a budgets file path
+          branch: ${{ github.ref }}
+          repository: ${{ github.repository }}
+          commit_sha: ${{ github.sha }}
+          commit_message: ${{ github.event.head_commit.message }}
+          commit_author: ${{ github.event.head_commit.author.name }}
+          commit_author_email: ${{ github.event.head_commit.author.email }}
