@@ -10,7 +10,7 @@ jobs:
       - name: Run audits of Page 1 and Page 2
         uses: omnifractal/audit-actions@main
         with:
-          pages: |
+          pages:
             Hp0HYqYTysEJ1iLvOh8D
             qk9SePmmwaG0UWRsI16o
           apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
