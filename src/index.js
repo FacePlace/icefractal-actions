@@ -41,11 +41,28 @@ const fs = require('fs');
           },
         },
       )
+      .then(async (res) => {
+        if (res.status >= 400) {
+          await res
+            .json()
+            .then((data) => {
+              if (Object.entries(data).length) {
+                core.setFailed(`Error: ${data}`);
+                console.error('Error details:', data);
+              } else {
+                const errMessage = res.type && res.statusText ?
+                  `Error: ${res.statusText}` :
+                  'Something went wrong';
+                core.setFailed(`Error: ${res.status} - ${errMessage}`);
+              }
+            });
+        }
+      })
       .catch((error) => {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          core.setFailed(`Error: ${error.response.status} - ${error.response.statusText}`);
+          core.setFailed(`Error: ${error.response.status} - ${error.response.message || error.response.statusText || `Something went wrong`}`);
           console.error('Error details:', error.response.data);
         } else if (error.request) {
           // The request was made but no response was received
@@ -53,7 +70,7 @@ const fs = require('fs');
           console.error('Error details:', error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          core.setFailed(`Error: ${error.message}`);
+          core.setFailed(`Error: ${error.response.message || error.response.statusText || `Something went wrong`}`);
           console.error('Error details:', error);
         }
       });
