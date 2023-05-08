@@ -2,14 +2,14 @@ const core = require('@actions/core');
 const axios = require('axios');
 const fs = require('fs');
 
-(async function () {
+(async function() {
   try {
-    const pages = core.getInput('pages').split('\n').map((page) => page.trim());
+    const pages = core.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
 
     const budgetsPath = core.getInput('budgetsPath');
-    const budgets = budgetsPath
-      ? JSON.parse(fs.readFileSync(budgetsPath, 'utf8'))
-      : undefined;
+    const budgets = budgetsPath ?
+      JSON.parse(fs.readFileSync(budgetsPath, 'utf8')) :
+      undefined;
 
     const apiKey = core.getInput('apiKey');
 
@@ -37,15 +37,28 @@ const fs = require('fs');
         {
           headers: {
             'Content-Type': 'application/json',
-            Authorization: `Bearer ${apiKey}`,
+            'Authorization': `Bearer ${apiKey}`,
           },
-        }
+        },
       )
       .catch((error) => {
-        console.log(error);
-        core.setFailed(error.response.data);
+        if (error.response) {
+          // The request was made and the server responded with a status code
+          // that falls out of the range of 2xx
+          core.setFailed(`Error: ${error.response.status} - ${error.response.statusText}`);
+          console.error('Error details:', error.response.data);
+        } else if (error.request) {
+          // The request was made but no response was received
+          core.setFailed('Error: No response received from the server');
+          console.error('Error details:', error.request);
+        } else {
+          // Something happened in setting up the request that triggered an Error
+          core.setFailed(`Error: ${error.message}`);
+          console.error('Error details:', error);
+        }
       });
   } catch (error) {
-    core.setFailed(error.message);
+    core.setFailed(`Error: ${error.message}`);
+    console.error('Error details:', error);
   }
 })();
