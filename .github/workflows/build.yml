@@ -11,9 +11,9 @@ jobs:
         uses: faceplace/icefractal-actions@main
         with:
           pages:
-            Hp0HYqYTysEJ1iLvOh8D,
+            Hp0HYqYTysEJ1iLvOh8D
             qk9SePmmwaG0UWRsI16o
-          apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
+          apiKey: anidthatwontwork
           budgetsPath: '.github/omnifractal/budgets.json' # example of a budgets file path
           branch: ${{ github.ref }}
           repository: ${{ github.repository }}
