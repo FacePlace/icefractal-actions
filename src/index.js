@@ -2,6 +2,21 @@ const core = require('@actions/core');
 const axios = require('axios');
 const fs = require('fs');
 
+async function checkAuditStatus(auditTrackingIDs) {
+  const res = await axios
+    .post(
+      'https://api.omnifractal.com/v1/checkAuditStatus', {
+        audits: auditTrackingIDs,
+      }, {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      },
+    )
+
+  return res.data;
+}
+
 (async function() {
   try {
     const pages = core.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
@@ -25,8 +40,7 @@ const fs = require('fs');
 
     await axios
       .post(
-        'https://api.omnifractal.com/v1/auditWithActions',
-        {
+        'https://api.omnifractal.com/v1/auditWithActions', {
           pages: pages,
           budgets: budgets,
           branch: branch,
@@ -35,8 +49,7 @@ const fs = require('fs');
           commit_message: commit_message,
           commit_author: commit_author,
           commit_author_email: commit_author_email,
-        },
-        {
+        }, {
           headers: {
             'Content-Type': 'application/json',
             'Authorization': `Bearer ${apiKey}`,
@@ -51,7 +64,62 @@ const fs = require('fs');
             auditTrackingIDs = res.data.audits;
           }
 
-          console.log(auditTrackingIDs);
+          const finishedAudits = [];
+
+          const startTime = new Date().getTime();
+          const endTime = startTime + (5 * 60 * 1000);
+
+          while (true) {
+            if (new Date().getTime() >= endTime) {
+              let message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
+
+              if (finishedAudits.length > 0) {
+                message += `The following audits have finished:\n`
+                finishedAudits.forEach((audit) => {
+                  message += `- Page: ${audit.page_name}. Profile: ${audit.profile_name}. Status: ${audit.status}.\n`
+                  if (audit.message) {
+                    message += `${audit.message}\n`
+                  }
+                })
+              }
+
+              core.setFailed(message);
+              break;
+            }
+
+            const auditStatus = await checkAuditStatus(auditTrackingIDs);
+
+            if (auditStatus && auditStatus.length > 0) {
+              auditStatus.forEach((audit) => {
+                if (audit.status === 'completed' || audit.status === 'failed' || audit.status === 'error') {
+                  finishedAudits.push(audit);
+                }
+              });
+
+              if (finishedAudits.length === auditTrackingIDs.length) {
+                let message = `${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits have finished.\n`;
+                
+                if (finishedAudits.length > 0) {
+                  message += `The following audits have finished:\n`
+                  finishedAudits.forEach((audit) => {
+                    message += `- Page: ${audit.page_name}. Profile: ${audit.profile_name}. Status: ${audit.status}.\n`
+                    if (audit.message) {
+                      message += `${audit.message}\n`
+                    }
+                  })
+                }
+
+                core.setOutput(message)
+                break;
+              }
+            } else {
+              core.setFailed('Error: No response received from the server')
+              break;
+            }
+
+            await new Promise((resolve) => setTimeout(resolve, 10000));
+          }
+          
         }
       })
       .catch((error) => {
