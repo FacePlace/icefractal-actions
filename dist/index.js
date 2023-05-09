@@ -6156,29 +6156,6 @@ exports["default"] = _default;
 
 "use strict";
 
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -6194,145 +6171,116 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
-const core = __importStar(__nccwpck_require__(2186));
+const core_1 = __importDefault(__nccwpck_require__(2186));
+const TIMEOUT_MIN = 60;
+const TIMEOUT_MAX = 600;
+function formatSpaces(str) {
+    return str.split('\n').map((line) => ' ' + line).join('\n');
+}
 function checkAuditStatus(auditTrackingIDs) {
     return __awaiter(this, void 0, void 0, function* () {
-        const res = yield axios_1.default
-            .post('https://api.omnifractal.com/v1/checkAuditStatus', {
-            audits: auditTrackingIDs,
-        }, {
-            headers: {
-                'Content-Type': 'application/json',
-            },
-        });
-        return res.data;
+        const response = yield axios_1.default.post('https://api.omnifractal.com/v1/checkAuditStatus', { audits: auditTrackingIDs }, { headers: { 'Content-Type': 'application/json' } });
+        return response.data;
     });
 }
-const formatSpaces = (str) => {
-    return str.split('\n').map((line) => '  ' + line).join('\n');
-};
+function runAuditWithActions(config) {
+    var _a, _b;
+    return __awaiter(this, void 0, void 0, function* () {
+        const response = yield axios_1.default.post('https://api.omnifractal.com/v1/auditWithActions', config, {
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${config.apiKey}`,
+            },
+        });
+        if (response.status >= 400) {
+            throw new Error(`${response.status} - ${response.data.message || response.statusText || 'Something went wrong'}`);
+        }
+        return (_b = (_a = response.data) === null || _a === void 0 ? void 0 : _a.audits) !== null && _b !== void 0 ? _b : [];
+    });
+}
+function waitForAuditsCompletion(auditTrackingIDs, timeout) {
+    return __awaiter(this, void 0, void 0, function* () {
+        const startTime = new Date().getTime();
+        const endTime = startTime + timeout * 1000;
+        const finishedAudits = [];
+        let timeoutOccurred = false;
+        while (true) {
+            if (new Date().getTime() >= endTime) {
+                timeoutOccurred = true;
+                break;
+            }
+            const auditStatus = yield checkAuditStatus(auditTrackingIDs);
+            const pendingAudits = auditStatus.audits.filter((audit) => audit.status !== 'completed' && audit.status !== 'failed' && audit.status !== 'error');
+            if (pendingAudits.length === 0) {
+                finishedAudits.push(...auditStatus.audits);
+                break;
+            }
+            yield new Promise((resolve) => setTimeout(resolve, 10000));
+        }
+        return { finishedAudits, timeoutOccurred };
+    });
+}
+function validateTimeout(timeout) {
+    return timeout >= TIMEOUT_MIN && timeout <= TIMEOUT_MAX;
+}
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        try {
-            const pages = core.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
-            const budgetsPath = core.getInput('budgetsPath');
-            const budgets = budgetsPath ?
-                JSON.parse(fs_1.default.readFileSync(budgetsPath, 'utf8')) :
-                undefined;
-            const apiKey = core.getInput('apiKey');
-            const branch = core.getInput('branch');
-            const repository = core.getInput('repository');
-            const waitForResults = core.getInput('waitForResults') ? core.getInput('waitForResults') === 'true' : true;
-            const timeout = core.getInput('timeout') ? parseInt(core.getInput('timeout'), 10) : 300;
-            if (timeout < 60) {
-                core.setFailed('Error: timeout must be at least 60 seconds');
-                return;
-            }
-            else if (timeout > 600) {
-                core.setFailed('Error: timeout must be at most 600 seconds (10 minutes)');
-                return;
-            }
-            const commit_sha = core.getInput('commit_sha');
-            const commit_message = core.getInput('commit_message');
-            const commit_author = core.getInput('commit_author');
-            const commit_author_email = core.getInput('commit_author_email');
-            let auditTrackingIDs = [];
-            yield axios_1.default
-                .post('https://api.omnifractal.com/v1/auditWithActions', {
-                pages: pages,
-                budgets: budgets,
-                branch: branch,
-                repository: repository,
-                commit_sha: commit_sha,
-                commit_message: commit_message,
-                commit_author: commit_author,
-                commit_author_email: commit_author_email,
-            }, {
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`,
-                },
-            })
-                .then((res) => __awaiter(this, void 0, void 0, function* () {
-                if (res.status >= 400) {
-                    core.setFailed(`Error: ${res.status} - ${res.data.message || res.statusText || `Something went wrong`}`);
-                }
-                else {
-                    if (res.data && res.data.audits && Array.isArray(res.data.audits)) {
-                        auditTrackingIDs = res.data.audits;
-                    }
-                    const startTime = new Date().getTime();
-                    const endTime = startTime + ((timeout) * 1000);
-                    while (waitForResults) {
-                        const finishedAudits = [];
-                        if (new Date().getTime() >= endTime) {
-                            let message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
-                            if (finishedAudits.length > 0) {
-                                message += `The following audits have finished:\n`;
-                                finishedAudits.forEach((audit) => {
-                                    message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`;
-                                    if (audit.message) {
-                                        message += `${formatSpaces(audit.message)}\n`;
-                                    }
-                                });
-                            }
-                            core.setFailed(message);
-                            break;
-                        }
-                        const auditStatus = yield checkAuditStatus(auditTrackingIDs);
-                        if (auditStatus.audits && auditStatus.audits.length > 0) {
-                            auditStatus.audits.forEach((audit) => {
-                                if (audit.status === 'completed' || audit.status === 'failed' || audit.status === 'error') {
-                                    finishedAudits.push(audit);
-                                }
-                            });
-                            if (finishedAudits.length >= auditTrackingIDs.length) {
-                                let message = `${finishedAudits.length} out of ${auditTrackingIDs.length} audits have finished.\n`;
-                                if (finishedAudits.length > 0) {
-                                    message += `The following audits have finished:\n`;
-                                    finishedAudits.forEach((audit) => {
-                                        message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`;
-                                        if (audit.message) {
-                                            message += `${formatSpaces(audit.message)}\n`;
-                                        }
-                                    });
-                                }
-                                if (finishedAudits.filter((audit) => audit.status === 'failed' || audit.status === 'error').length > 0) {
-                                    core.setFailed(message);
-                                }
-                                core.debug(message);
-                                break;
-                            }
-                        }
-                        else {
-                            core.setFailed('Error: No response received from the server');
-                            break;
-                        }
-                        yield new Promise((resolve) => setTimeout(resolve, 10000));
-                    }
-                }
-            }))
-                .catch((error) => {
-                if (error.response) {
-                    core.setFailed(`Error: ${error.response.status} - ${error.response.data.message || error.response.message || error.response.statusText || `Something went wrong`}`);
-                    console.error('Error details:', error.response.data);
-                }
-                else if (error.request) {
-                    core.setFailed('Error: No response received from the server');
-                    console.error('Error details:', error.request);
-                }
-                else {
-                    core.setFailed(`Error: ${error.message || error.data.message || `Something went wrong`}`);
-                    console.error('Error details:', error);
+        const pages = core_1.default.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
+        const budgetsPath = core_1.default.getInput('budgetsPath');
+        const budgets = budgetsPath ? JSON.parse(fs_1.default.readFileSync(budgetsPath, 'utf8')) : undefined;
+        const apiKey = core_1.default.getInput('apiKey');
+        const branch = core_1.default.getInput('branch');
+        const repository = core_1.default.getInput('repository');
+        const waitForResults = core_1.default.getInput('waitForResults') === 'true';
+        const timeout = parseInt(core_1.default.getInput('timeout'), 10);
+        if (!validateTimeout(timeout)) {
+            core_1.default.setFailed('Error: timeout must be between 60 and 600 seconds (1 to 10 minutes)');
+            return;
+        }
+        const commitSha = core_1.default.getInput('commit_sha');
+        const commitMessage = core_1.default.getInput('commit_message');
+        const commitAuthor = core_1.default.getInput('commit_author');
+        const commitAuthorEmail = core_1.default.getInput('commit_author_email');
+        const auditTrackingIDs = yield runAuditWithActions({
+            pages,
+            budgets,
+            branch,
+            repository,
+            commitSha,
+            commitMessage,
+            commitAuthor,
+            commitAuthorEmail,
+            apiKey,
+        });
+        if (waitForResults) {
+            const { finishedAudits, timeoutOccurred } = yield waitForAuditsCompletion(auditTrackingIDs, timeout);
+            const messageParts = [];
+            finishedAudits.forEach((audit) => {
+                messageParts.push(`- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`);
+                if (audit.message) {
+                    messageParts.push(`${formatSpaces(audit.message)}\n`);
                 }
             });
-        }
-        catch (error) {
-            core.setFailed(`Error: ${error.message}`);
-            console.error('Error details:', error);
+            if (timeoutOccurred) {
+                const message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
+                core_1.default.setFailed(message);
+            }
+            else {
+                const message = `Out of ${auditTrackingIDs.length} audits, ${finishedAudits.length} have finished:\n${messageParts.join('')}`;
+                if (finishedAudits.some((audit) => audit.status === 'failed' || audit.status === 'error')) {
+                    core_1.default.setFailed(message);
+                }
+                else {
+                    core_1.default.debug(message);
+                }
+            }
         }
     });
-})();
+})()
+    .catch((error) => {
+    core_1.default.setFailed(`Error: ${error.message}`);
+    console.error('Error details:', error);
+});
 
 
 /***/ }),
