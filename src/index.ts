@@ -1,8 +1,8 @@
-const core = require('@actions/core');
-const axios = require('axios');
-const fs = require('fs');
+import axios from 'axios';
+import fs from 'fs';
+import core from '@actions/core';
 
-async function checkAuditStatus(auditTrackingIDs) {
+async function checkAuditStatus(auditTrackingIDs: string[]) {
   const res = await axios
     .post(
       'https://api.omnifractal.com/v1/checkAuditStatus', {
@@ -17,8 +17,16 @@ async function checkAuditStatus(auditTrackingIDs) {
   return res.data;
 }
 
-const formatSpaces = (str) => {
-  return str.split('\n').map((line) => '  ' + line).join('\n');
+const formatSpaces = (str: string) => {
+  return str.split('\n').map((line) => '  ' + line).join('\n')
+}
+
+type AuditStatus =   'scheduled' | 'running' | 'completed' | 'failed' | 'error'
+type Audit = {
+  status: AuditStatus;
+  message?: string;
+  page_name?: string;
+  profile_name?: string;
 }
 
 (async function() {
@@ -51,7 +59,7 @@ const formatSpaces = (str) => {
     const commit_author = core.getInput('commit_author');
     const commit_author_email = core.getInput('commit_author_email');
 
-    let auditTrackingIDs = [];
+    let auditTrackingIDs: string[] = [];
 
     await axios
       .post(
@@ -73,7 +81,7 @@ const formatSpaces = (str) => {
       )
       .then(async (res) => {
         if (res.status >= 400) {
-          core.setFailed(`Error: ${res.status} - ${res.data.message || res.message || res.statusText || `Something went wrong`}`);
+          core.setFailed(`Error: ${res.status} - ${res.data.message || res.statusText || `Something went wrong`}`);
         } else {
           if (res.data && res.data.audits && Array.isArray(res.data.audits)) {
             auditTrackingIDs = res.data.audits;
@@ -83,7 +91,7 @@ const formatSpaces = (str) => {
           const endTime = startTime + ((timeout) * 1000);
           
           while (waitForResults) {
-            const finishedAudits = [];
+            const finishedAudits: Audit[] = [];
 
             if (new Date().getTime() >= endTime) {
               let message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
@@ -105,7 +113,7 @@ const formatSpaces = (str) => {
             const auditStatus = await checkAuditStatus(auditTrackingIDs);
 
             if (auditStatus.audits && auditStatus.audits.length > 0) {
-              auditStatus.audits.forEach((audit) => {
+              auditStatus.audits.forEach((audit: Audit) => {
                 if (audit.status === 'completed' || audit.status === 'failed' || audit.status === 'error') {
                   finishedAudits.push(audit);
                 }
@@ -156,7 +164,7 @@ const formatSpaces = (str) => {
           console.error('Error details:', error);
         }
       });
-  } catch (error) {
+  } catch (error: any) {
     core.setFailed(`Error: ${error.message}`);
     console.error('Error details:', error);
   }
