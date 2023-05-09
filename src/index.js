@@ -21,6 +21,8 @@ const fs = require('fs');
     const commit_author = core.getInput('commit_author');
     const commit_author_email = core.getInput('commit_author_email');
 
+    let auditTrackingIDs = [];
+
     await axios
       .post(
         'https://api.omnifractal.com/v1/auditWithActions',
@@ -43,27 +45,13 @@ const fs = require('fs');
       )
       .then(async (res) => {
         if (res.status >= 400) {
-          await res
-            .json()
-            .then((data) => {
-              if (Object.entries(data).length) {
-                core.setFailed(`Error: ${data}`);
-                console.error('Error details:', data);
-              } else {
-                const errMessage = res.type && res.statusText ?
-                  `Error: ${res.statusText}` :
-                  'Something went wrong';
-                core.setFailed(`Error: ${res.status} - ${errMessage}`);
-              }
-            });
+          core.setFailed(`Error: ${res.status} - ${res.data.message || res.message || res.statusText || `Something went wrong`}`);
         } else {
-          console.log(res);
-          // await res
-          //   .json()
-          //   .then((data) => {
-          //     console.log('Audits:', data);
-          //     core.setOutput('Audits started', data);
-          //   });
+          if (res.data && res.data.audits && isArray(res.data.audits)) {
+            auditTrackingIDs = res.data.audits;
+          }
+
+          console.log(auditTrackingIDs);
         }
       })
       .catch((error) => {
