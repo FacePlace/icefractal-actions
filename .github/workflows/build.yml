@@ -8,7 +8,7 @@ jobs:
     steps:
       - uses: actions/checkout@v3 # Checkout your code to the GitHub Actions runner
       - name: Run audits of Page 1 and Page 2
-        uses: faceplace/icefractal-actions@main
+        uses: Omnifractal/audit-actions@main
         with:
           pages:
             Hp0HYqYTysEJ1iLvOh8D
