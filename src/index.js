@@ -106,7 +106,7 @@ const formatSpaces = (str) => {
                 if (finishedAudits.length > 0) {
                   message += `The following audits have finished:\n`
                   finishedAudits.forEach((audit) => {
-                    message += `- Page: ${audit.page_name}. Profile: ${audit.profile_name}. Status: ${audit.status}.\n`
+                    message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`
                     if (audit.message) {
                       message += `${formatSpaces(audit.message)}\n`
                     }
