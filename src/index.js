@@ -56,6 +56,13 @@ const fs = require('fs');
                 core.setFailed(`Error: ${res.status} - ${errMessage}`);
               }
             });
+        } else {
+          await res
+            .json()
+            .then((data) => {
+              console.log('Audits:', data);
+              core.setOutput('Audits started', data);
+            });
         }
       })
       .catch((error) => {
