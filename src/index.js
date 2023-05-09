@@ -77,7 +77,7 @@ const fs = require('fs');
           console.error('Error details:', error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          core.setFailed(`Error: ${error.response.data.message || error.response.message || error.response.statusText || `Something went wrong`}`);
+          core.setFailed(`Error: ${error.message || error.data.message || `Something went wrong`}`);
           console.error('Error details:', error);
         }
       });
