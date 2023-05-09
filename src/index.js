@@ -57,12 +57,13 @@ const fs = require('fs');
               }
             });
         } else {
-          await res
-            .json()
-            .then((data) => {
-              console.log('Audits:', data);
-              core.setOutput('Audits started', data);
-            });
+          console.log(res);
+          // await res
+          //   .json()
+          //   .then((data) => {
+          //     console.log('Audits:', data);
+          //     core.setOutput('Audits started', data);
+          //   });
         }
       })
       .catch((error) => {
