@@ -14,7 +14,7 @@ type Audit = {
 };
 
 function formatSpaces(str: string) {
-  return str.split('\n').map((line) => ' ' + line).join('\n');
+  return str.split('\n').map((line) => '  ' + line).join('\n');
 }
 
 async function checkAuditStatus(auditTrackingIDs: string[]): Promise<{ audits: Audit[] }> {
@@ -126,7 +126,7 @@ function validateTimeout(timeout: number): boolean {
     });
 
     if (timeoutOccurred) {
-      const message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
+      const message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
       core.setFailed(message);
     } else {
       const message = `Out of ${auditTrackingIDs.length} audits, ${finishedAudits.length} have finished:\n${messageParts.join('')}`;

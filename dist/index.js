@@ -6198,7 +6198,7 @@ const core = __importStar(__nccwpck_require__(2186));
 const TIMEOUT_MIN = 60;
 const TIMEOUT_MAX = 600;
 function formatSpaces(str) {
-    return str.split('\n').map((line) => ' ' + line).join('\n');
+    return str.split('\n').map((line) => '  ' + line).join('\n');
 }
 function checkAuditStatus(auditTrackingIDs) {
     return __awaiter(this, void 0, void 0, function* () {
@@ -6285,7 +6285,7 @@ function validateTimeout(timeout) {
                 }
             });
             if (timeoutOccurred) {
-                const message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
+                const message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
                 core.setFailed(message);
             }
             else {
