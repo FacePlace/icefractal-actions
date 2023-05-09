@@ -3,7 +3,7 @@
     "target": "es6",
     "module": "commonjs",
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "nodenext",
     "removeComments": true,
     "preserveConstEnums": true,
     "sourceMap": true,
