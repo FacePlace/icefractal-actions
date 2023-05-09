@@ -16,7 +16,7 @@ jobs:
           apiKey: ${{ secrets.OMNIFRACTAL_TEST_PROJECT1_API_KEY }}
           waitForResults: true
           timeout: 300
-          budgetsPath: '.github/omnifractal/budgets.json' # example of a budgets file path
+          # budgetsPath: '.github/omnifractal/budgets.json' # example of a budgets file path
           branch: ${{ github.ref }}
           repository: ${{ github.repository }}
           commit_sha: ${{ github.sha }}
