@@ -6225,17 +6225,17 @@ function waitForAuditsCompletion(auditTrackingIDs, timeout) {
     return __awaiter(this, void 0, void 0, function* () {
         const startTime = new Date().getTime();
         const endTime = startTime + timeout * 1000;
-        const finishedAudits = [];
         let timeoutOccurred = false;
+        let finishedAudits = [];
         while (true) {
             if (new Date().getTime() >= endTime) {
                 timeoutOccurred = true;
                 break;
             }
             const auditStatus = yield checkAuditStatus(auditTrackingIDs);
+            finishedAudits = auditStatus.audits.filter((audit) => audit.status === 'completed' || audit.status === 'failed' || audit.status === 'error');
             const pendingAudits = auditStatus.audits.filter((audit) => audit.status !== 'completed' && audit.status !== 'failed' && audit.status !== 'error');
             if (pendingAudits.length === 0) {
-                finishedAudits.push(...auditStatus.audits);
                 break;
             }
             yield new Promise((resolve) => setTimeout(resolve, 10000));
@@ -6285,7 +6285,10 @@ function validateTimeout(timeout) {
                 }
             });
             if (timeoutOccurred) {
-                const message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
+                let message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.`;
+                if (finishedAudits.length) {
+                    message += ` The following audits have finished:\n${messageParts.join('')}`;
+                }
                 core.setFailed(message);
             }
             else {
