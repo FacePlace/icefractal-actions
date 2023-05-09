@@ -17,6 +17,10 @@ async function checkAuditStatus(auditTrackingIDs) {
   return res.data;
 }
 
+const formatSpaces = (str) => {
+  return str.split('\n').map((line) => '  ' + line).join('\n');
+}
+
 (async function() {
   try {
     const pages = core.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
@@ -71,14 +75,14 @@ async function checkAuditStatus(auditTrackingIDs) {
             const finishedAudits = [];
 
             if (new Date().getTime() >= endTime) {
-              let message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
+              let message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
 
               if (finishedAudits.length > 0) {
                 message += `The following audits have finished:\n`
                 finishedAudits.forEach((audit) => {
                   message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`
                   if (audit.message) {
-                    message += `${audit.message}\n`
+                    message += `${formatSpaces(audit.message)}\n`
                   }
                 })
               }
@@ -97,14 +101,14 @@ async function checkAuditStatus(auditTrackingIDs) {
               });
 
               if (finishedAudits.length >= auditTrackingIDs.length) {
-                let message = `${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits have finished.\n`;
+                let message = `${finishedAudits.length} out of ${auditTrackingIDs.length} audits have finished.\n`;
                 
                 if (finishedAudits.length > 0) {
                   message += `The following audits have finished:\n`
                   finishedAudits.forEach((audit) => {
                     message += `- Page: ${audit.page_name}. Profile: ${audit.profile_name}. Status: ${audit.status}.\n`
                     if (audit.message) {
-                      message += `${audit.message}\n`
+                      message += `${formatSpaces(audit.message)}\n`
                     }
                   })
                 }
