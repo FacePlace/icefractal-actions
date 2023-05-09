@@ -1,6 +1,6 @@
 import axios from 'axios';
 import fs from 'fs';
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 async function checkAuditStatus(auditTrackingIDs: string[]) {
   const res = await axios
