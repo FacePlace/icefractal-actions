@@ -37,13 +37,12 @@ const formatSpaces = (str) => {
     const repository = core.getInput('repository');
     const waitForResults = core.getInput('waitForResults') ? core.getInput('waitForResults') === 'true' : true;
     const timeout = core.getInput('timeout') ? parseInt(core.getInput('timeout'), 10) : 300;
-    console.log('waitForResults', waitForResults);
-    console.log('timeout', timeout);
+
     if (timeout < 60) {
       core.setFailed('Error: timeout must be at least 60 seconds');
       return;
-    } else if (timeout > 300) {
-      core.setFailed('Error: timeout must be at most 300 seconds (5 minutes)');
+    } else if (timeout > 600) {
+      core.setFailed('Error: timeout must be at most 600 seconds (10 minutes)');
       return;
     }
 
