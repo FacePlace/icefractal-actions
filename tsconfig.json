@@ -1,19 +1,19 @@
 {
   "compilerOptions": {
+    "target": "es6",
     "module": "commonjs",
-    "noImplicitReturns": true,
-    "noUnusedLocals": true,
-    "outDir": "dist",
-    "sourceMap": true,
     "strict": true,
-    "target": "es2022",
-    "moduleResolution": "nodenext",
+    "moduleResolution": "node",
+    "removeComments": true,
     "preserveConstEnums": true,
-    "esModuleInterop": true
+    "sourceMap": true,
+    "forceConsistentCasingInFileNames": true,
+    "outDir": "dist",
+    "esModuleInterop": true,
+    "declaration": false
   },
-  "compileOnSave": true,
   "include": [
-    "src",
+    "src/**/*.ts"
   ],
   "exclude": [
     "node_modules"
