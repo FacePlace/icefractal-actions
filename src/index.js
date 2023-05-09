@@ -64,19 +64,19 @@ async function checkAuditStatus(auditTrackingIDs) {
             auditTrackingIDs = res.data.audits;
           }
 
-          const finishedAudits = [];
-
           const startTime = new Date().getTime();
           const endTime = startTime + (5 * 60 * 1000);
-
+          
           while (true) {
+            const finishedAudits = [];
+
             if (new Date().getTime() >= endTime) {
               let message = `Error: ${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
 
               if (finishedAudits.length > 0) {
                 message += `The following audits have finished:\n`
                 finishedAudits.forEach((audit) => {
-                  message += `- Page: ${audit.page_name}. Profile: ${audit.profile_name}. Status: ${audit.status}.\n`
+                  message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`
                   if (audit.message) {
                     message += `${audit.message}\n`
                   }
@@ -96,7 +96,7 @@ async function checkAuditStatus(auditTrackingIDs) {
                 }
               });
 
-              if (finishedAudits.length === auditTrackingIDs.length) {
+              if (finishedAudits.length >= auditTrackingIDs.length) {
                 let message = `${auditTrackingIDs.length - finishedAudits.length} out of ${auditTrackingIDs.length} audits have finished.\n`;
                 
                 if (finishedAudits.length > 0) {
