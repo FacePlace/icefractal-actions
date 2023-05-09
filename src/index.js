@@ -109,7 +109,7 @@ async function checkAuditStatus(auditTrackingIDs) {
                   })
                 }
 
-                core.setOutput('Status', message);
+                core.debug(message);
                 break;
               }
             } else {
