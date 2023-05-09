@@ -35,6 +35,18 @@ const formatSpaces = (str) => {
     // Retrieve additional information
     const branch = core.getInput('branch');
     const repository = core.getInput('repository');
+    const waitForResults = core.getInput('waitForResults') ? core.getInput('waitForResults') === 'true' : true;
+    const timeout = core.getInput('timeout') ? parseInt(core.getInput('timeout'), 10) : 300;
+    console.log('waitForResults', waitForResults);
+    console.log('timeout', timeout);
+    if (timeout < 60) {
+      core.setFailed('Error: timeout must be at least 60 seconds');
+      return;
+    } else if (timeout > 300) {
+      core.setFailed('Error: timeout must be at most 300 seconds (5 minutes)');
+      return;
+    }
+
     const commit_sha = core.getInput('commit_sha');
     const commit_message = core.getInput('commit_message');
     const commit_author = core.getInput('commit_author');
@@ -69,9 +81,9 @@ const formatSpaces = (str) => {
           }
 
           const startTime = new Date().getTime();
-          const endTime = startTime + (5 * 60 * 1000);
+          const endTime = startTime + ((timeout) * 1000);
           
-          while (true) {
+          while (waitForResults) {
             const finishedAudits = [];
 
             if (new Date().getTime() >= endTime) {

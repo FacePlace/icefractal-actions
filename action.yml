@@ -7,6 +7,12 @@ inputs:
   apiKey:
     description: 'API key for authorization'
     required: true
+  waitForResults:
+    description: 'Wait for audits to finish'
+    required: false
+  timeout:
+    description: 'How long to wait for audits to finish, in seconds. Default is 300 (5 minutes).'
+    required: false
   budgetsPath:
     description: 'Path to the Lighthouse budget file'
     required: false
