@@ -6156,6 +6156,29 @@ exports["default"] = _default;
 
 "use strict";
 
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -6171,7 +6194,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const axios_1 = __importDefault(__nccwpck_require__(8757));
 const fs_1 = __importDefault(__nccwpck_require__(7147));
-const core_1 = __importDefault(__nccwpck_require__(2186));
+const core = __importStar(__nccwpck_require__(2186));
 const TIMEOUT_MIN = 60;
 const TIMEOUT_MAX = 600;
 function formatSpaces(str) {
@@ -6225,22 +6248,22 @@ function validateTimeout(timeout) {
 }
 (function () {
     return __awaiter(this, void 0, void 0, function* () {
-        const pages = core_1.default.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
-        const budgetsPath = core_1.default.getInput('budgetsPath');
+        const pages = core.getInput('pages').split(/[\n\s]+/).map((page) => page.trim());
+        const budgetsPath = core.getInput('budgetsPath');
         const budgets = budgetsPath ? JSON.parse(fs_1.default.readFileSync(budgetsPath, 'utf8')) : undefined;
-        const apiKey = core_1.default.getInput('apiKey');
-        const branch = core_1.default.getInput('branch');
-        const repository = core_1.default.getInput('repository');
-        const waitForResults = core_1.default.getInput('waitForResults') === 'true';
-        const timeout = parseInt(core_1.default.getInput('timeout'), 10);
+        const apiKey = core.getInput('apiKey');
+        const branch = core.getInput('branch');
+        const repository = core.getInput('repository');
+        const waitForResults = core.getInput('waitForResults') === 'true';
+        const timeout = parseInt(core.getInput('timeout'), 10);
         if (!validateTimeout(timeout)) {
-            core_1.default.setFailed('Error: timeout must be between 60 and 600 seconds (1 to 10 minutes)');
+            core.setFailed('Error: timeout must be between 60 and 600 seconds (1 to 10 minutes)');
             return;
         }
-        const commitSha = core_1.default.getInput('commit_sha');
-        const commitMessage = core_1.default.getInput('commit_message');
-        const commitAuthor = core_1.default.getInput('commit_author');
-        const commitAuthorEmail = core_1.default.getInput('commit_author_email');
+        const commitSha = core.getInput('commit_sha');
+        const commitMessage = core.getInput('commit_message');
+        const commitAuthor = core.getInput('commit_author');
+        const commitAuthorEmail = core.getInput('commit_author_email');
         const auditTrackingIDs = yield runAuditWithActions({
             pages,
             budgets,
@@ -6263,22 +6286,22 @@ function validateTimeout(timeout) {
             });
             if (timeoutOccurred) {
                 const message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete. The following audits have finished:\n${messageParts.join('')}`;
-                core_1.default.setFailed(message);
+                core.setFailed(message);
             }
             else {
                 const message = `Out of ${auditTrackingIDs.length} audits, ${finishedAudits.length} have finished:\n${messageParts.join('')}`;
                 if (finishedAudits.some((audit) => audit.status === 'failed' || audit.status === 'error')) {
-                    core_1.default.setFailed(message);
+                    core.setFailed(message);
                 }
                 else {
-                    core_1.default.debug(message);
+                    core.debug(message);
                 }
             }
         }
     });
 })()
     .catch((error) => {
-    core_1.default.setFailed(`Error: ${error.message}`);
+    core.setFailed(`Error: ${error.message}`);
     console.error('Error details:', error);
 });
 

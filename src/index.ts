@@ -1,6 +1,6 @@
 import axios from 'axios';
 import fs from 'fs';
-import core from '@actions/core';
+import * as core from '@actions/core';
 
 const TIMEOUT_MIN = 60;
 const TIMEOUT_MAX = 600;
