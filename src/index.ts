@@ -51,8 +51,9 @@ async function waitForAuditsCompletion(auditTrackingIDs: string[], timeout: numb
 }> {
   const startTime = new Date().getTime();
   const endTime = startTime + timeout * 1000;
-  const finishedAudits: Audit[] = [];
   let timeoutOccurred = false;
+
+  let finishedAudits: Audit[] = [];
 
   // eslint-disable-next-line no-constant-condition
   while (true) {
@@ -62,12 +63,15 @@ async function waitForAuditsCompletion(auditTrackingIDs: string[], timeout: numb
     }
 
     const auditStatus = await checkAuditStatus(auditTrackingIDs);
+    finishedAudits = auditStatus.audits.filter(
+      (audit: Audit) => audit.status === 'completed' || audit.status === 'failed' || audit.status === 'error',
+    );
+
     const pendingAudits = auditStatus.audits.filter(
       (audit: Audit) => audit.status !== 'completed' && audit.status !== 'failed' && audit.status !== 'error',
     );
 
     if (pendingAudits.length === 0) {
-      finishedAudits.push(...auditStatus.audits);
       break;
     }
 
