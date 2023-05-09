@@ -12,16 +12,16 @@ async function checkAuditStatus(auditTrackingIDs: string[]) {
           'Content-Type': 'application/json',
         },
       },
-    )
+    );
 
   return res.data;
 }
 
 const formatSpaces = (str: string) => {
-  return str.split('\n').map((line) => '  ' + line).join('\n')
-}
+  return str.split('\n').map((line) => '  ' + line).join('\n');
+};
 
-type AuditStatus =   'scheduled' | 'running' | 'completed' | 'failed' | 'error'
+type AuditStatus = 'scheduled' | 'running' | 'completed' | 'failed' | 'error'
 type Audit = {
   status: AuditStatus;
   message?: string;
@@ -54,10 +54,10 @@ type Audit = {
       return;
     }
 
-    const commit_sha = core.getInput('commit_sha');
-    const commit_message = core.getInput('commit_message');
-    const commit_author = core.getInput('commit_author');
-    const commit_author_email = core.getInput('commit_author_email');
+    const commitSha = core.getInput('commit_sha');
+    const commitMessage = core.getInput('commit_message');
+    const commitAuthor = core.getInput('commit_author');
+    const commitAuthorEmail = core.getInput('commit_author_email');
 
     let auditTrackingIDs: string[] = [];
 
@@ -68,10 +68,10 @@ type Audit = {
           budgets: budgets,
           branch: branch,
           repository: repository,
-          commit_sha: commit_sha,
-          commit_message: commit_message,
-          commit_author: commit_author,
-          commit_author_email: commit_author_email,
+          commit_sha: commitSha,
+          commit_message: commitMessage,
+          commit_author: commitAuthor,
+          commit_author_email: commitAuthorEmail,
         }, {
           headers: {
             'Content-Type': 'application/json',
@@ -81,7 +81,7 @@ type Audit = {
       )
       .then(async (res) => {
         if (res.status >= 400) {
-          core.setFailed(`Error: ${res.status} - ${res.data.message || res.statusText || `Something went wrong`}`);
+          core.setFailed(`Error: ${res.status} - ${res.data.message || res.statusText || 'Something went wrong'}`);
         } else {
           if (res.data && res.data.audits && Array.isArray(res.data.audits)) {
             auditTrackingIDs = res.data.audits;
@@ -89,7 +89,7 @@ type Audit = {
 
           const startTime = new Date().getTime();
           const endTime = startTime + ((timeout) * 1000);
-          
+
           while (waitForResults) {
             const finishedAudits: Audit[] = [];
 
@@ -97,13 +97,13 @@ type Audit = {
               let message = `Error: ${finishedAudits.length} out of ${auditTrackingIDs.length} audits took too long to complete.\n`;
 
               if (finishedAudits.length > 0) {
-                message += `The following audits have finished:\n`
+                message += 'The following audits have finished:\n';
                 finishedAudits.forEach((audit) => {
-                  message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`
+                  message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`;
                   if (audit.message) {
-                    message += `${formatSpaces(audit.message)}\n`
+                    message += `${formatSpaces(audit.message)}\n`;
                   }
-                })
+                });
               }
 
               core.setFailed(message);
@@ -121,38 +121,37 @@ type Audit = {
 
               if (finishedAudits.length >= auditTrackingIDs.length) {
                 let message = `${finishedAudits.length} out of ${auditTrackingIDs.length} audits have finished.\n`;
-                
+
                 if (finishedAudits.length > 0) {
-                  message += `The following audits have finished:\n`
+                  message += 'The following audits have finished:\n';
                   finishedAudits.forEach((audit) => {
-                    message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`
+                    message += `- Page: ${audit.page_name}.\n  Profile: ${audit.profile_name}.\n  Status: ${audit.status}.\n`;
                     if (audit.message) {
-                      message += `${formatSpaces(audit.message)}\n`
+                      message += `${formatSpaces(audit.message)}\n`;
                     }
-                  })
+                  });
                 }
 
                 if (finishedAudits.filter((audit) => audit.status === 'failed' || audit.status === 'error').length > 0) {
-                  core.setFailed(message)
+                  core.setFailed(message);
                 }
                 core.debug(message);
                 break;
               }
             } else {
-              core.setFailed('Error: No response received from the server')
+              core.setFailed('Error: No response received from the server');
               break;
             }
 
             await new Promise((resolve) => setTimeout(resolve, 10000));
           }
-          
         }
       })
       .catch((error) => {
         if (error.response) {
           // The request was made and the server responded with a status code
           // that falls out of the range of 2xx
-          core.setFailed(`Error: ${error.response.status} - ${error.response.data.message || error.response.message || error.response.statusText || `Something went wrong`}`);
+          core.setFailed(`Error: ${error.response.status} - ${error.response.data.message || error.response.message || error.response.statusText || 'Something went wrong'}`);
           console.error('Error details:', error.response.data);
         } else if (error.request) {
           // The request was made but no response was received
@@ -160,7 +159,7 @@ type Audit = {
           console.error('Error details:', error.request);
         } else {
           // Something happened in setting up the request that triggered an Error
-          core.setFailed(`Error: ${error.message || error.data.message || `Something went wrong`}`);
+          core.setFailed(`Error: ${error.message || error.data.message || 'Something went wrong'}`);
           console.error('Error details:', error);
         }
       });
