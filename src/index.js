@@ -47,7 +47,7 @@ const fs = require('fs');
         if (res.status >= 400) {
           core.setFailed(`Error: ${res.status} - ${res.data.message || res.message || res.statusText || `Something went wrong`}`);
         } else {
-          if (res.data && res.data.audits && isArray(res.data.audits)) {
+          if (res.data && res.data.audits && Array.isArray(res.data.audits)) {
             auditTrackingIDs = res.data.audits;
           }
 
