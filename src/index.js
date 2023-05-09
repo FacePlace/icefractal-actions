@@ -109,6 +109,9 @@ async function checkAuditStatus(auditTrackingIDs) {
                   })
                 }
 
+                if (finishedAudits.filter((audit) => audit.status === 'failed' || audit.status === 'error').length > 0) {
+                  core.setFailed(message)
+                }
                 core.debug(message);
                 break;
               }
