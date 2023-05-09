@@ -89,8 +89,8 @@ async function checkAuditStatus(auditTrackingIDs) {
 
             const auditStatus = await checkAuditStatus(auditTrackingIDs);
 
-            if (auditStatus && auditStatus.length > 0) {
-              auditStatus.forEach((audit) => {
+            if (auditStatus.audits && auditStatus.audits.length > 0) {
+              auditStatus.audits.forEach((audit) => {
                 if (audit.status === 'completed' || audit.status === 'failed' || audit.status === 'error') {
                   finishedAudits.push(audit);
                 }
