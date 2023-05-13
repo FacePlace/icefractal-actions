@@ -7,7 +7,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3 # Checkout your code to the GitHub Actions runner
-      - name: Run audits of Page 1 and Page 2
+      - name: Run audits of SquareSpace and CNN
         uses: Omnifractal/audit-actions@main
         with:
           pages:
